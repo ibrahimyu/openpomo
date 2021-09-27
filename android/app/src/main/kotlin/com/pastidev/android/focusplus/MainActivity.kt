@@ -1,4 +1,4 @@
-package com.greymug.openpomo
+package com.pastidev.android.focusplus
 
 import io.flutter.embedding.android.FlutterActivity
 

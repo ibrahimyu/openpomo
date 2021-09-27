@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.10)
 project(runner LANGUAGES CXX)
 
-set(BINARY_NAME "openpomo")
-set(APPLICATION_ID "com.greymug.openpomo")
+set(BINARY_NAME "focusplus")
+set(APPLICATION_ID "com.pastidev.android.focusplus")
 
 cmake_policy(SET CMP0063 NEW)
 

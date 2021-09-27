@@ -1,48 +1,84 @@
 import 'package:flutter/material.dart';
-import 'task_list_drawer.dart';
-import 'timer.dart';
-import 'settings_drawer.dart';
+import 'package:focusplus/drawer.dart';
+import 'package:focusplus/models/project.dart';
+import 'package:focusplus/models/task.dart';
+import 'package:focusplus/pages/analytics/main.dart';
+import 'package:focusplus/pages/focus/focus.dart';
+import 'package:focusplus/pages/settings/main.dart';
+import 'package:focusplus/pages/tasks/list.dart';
+import 'package:get/get.dart';
+import 'package:hive/hive.dart';
 
-class HomePage extends StatefulWidget {
+class HomePageCtrl {
+  var currentPage = Rx<Widget>(const TaskListPage());
+}
+
+class HomePage extends GetView<HomePageCtrl> {
   const HomePage({Key? key}) : super(key: key);
 
   @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const HomeDrawer(),
       appBar: AppBar(
-        centerTitle: true,
-        title: const Text('OpenPomo'),
-        leading: Builder(
-          builder: (context) => IconButton(
-            icon: const Icon(Icons.task_alt_rounded),
-            onPressed: () => Scaffold.of(context).openDrawer(),
-          ),
-        ),
-        actions: [
-          Builder(
-            builder: (context) => IconButton(
-              icon: const Icon(Icons.settings),
-              onPressed: () => Scaffold.of(context).openEndDrawer(),
-            ),
-          ),
-        ],
+        title: const Text('Focus+'),
+        elevation: 0,
       ),
-      drawer: const TaskListDrawer(),
-      body: const TimerWidget(),
-      endDrawer: const SettingsDrawer(),
-      floatingActionButton: Builder(builder: (context) {
-        return FloatingActionButton(
-          onPressed: () {
-            Scaffold.of(context).openDrawer();
-          },
-          child: const Icon(Icons.menu),
-        );
-      }),
+      body: Obx(() => controller.currentPage.value),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: () {
+          Hive.box<Project>('projects').add(
+            Project(
+              name: 'New Project',
+              tasks: HiveList(
+                Hive.box<Task>('tasks'),
+              ),
+            ),
+          );
+        },
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      bottomNavigationBar: BottomAppBar(
+        shape: CircularNotchedRectangle(),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            IconButton(
+              onPressed: () {
+                controller.currentPage.value = TaskListPage();
+              },
+              icon: Icon(Icons.task),
+            ),
+            IconButton(
+              onPressed: () {
+                controller.currentPage.value = FocusPage();
+              },
+              icon: Icon(Icons.timer),
+            ),
+            SizedBox(
+              height: 8,
+              width: 44,
+            ),
+            IconButton(
+              onPressed: () {
+                controller.currentPage.value = AnalyticsPage();
+              },
+              icon: Icon(
+                Icons.pie_chart,
+              ),
+            ),
+            IconButton(
+              onPressed: () {
+                controller.currentPage.value = SettingsMainPage();
+              },
+              icon: Icon(
+                Icons.settings,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

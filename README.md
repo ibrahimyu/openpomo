@@ -1,4 +1,4 @@
-# openpomo
+# focusplus
 
 A new Flutter project.
 
